@@ -1,0 +1,47 @@
+!
+!
+service integrated-vtysh-config
+!
+interface eth0
+ ip address 10.0.0.2/24
+ ipv6 nd suppress-ra
+!
+interface eth1
+ ip address 10.0.1.1/24
+ ipv6 nd suppress-ra
+!
+interface eth2
+ ip address 10.0.3.1/24
+ ipv6 nd suppress-ra
+!
+interface lo
+!
+interface null0
+ ipv6 nd suppress-ra
+!
+router bgp 2200
+ bgp router-id 10.0.1.1
+ network 193.81.7.0/24
+ redistribute static route-map black-hole
+ neighbor 10.0.1.2 remote-as 128
+ neighbor 10.0.1.2 soft-reconfiguration inbound
+!
+router ospf
+ ospf router-id 10.0.0.2
+ passive-interface eth1
+ passive-interface eth2
+ network 10.0.0.0/24 area 0.0.0.0
+ network 10.0.1.0/24 area 0.0.0.0
+ network 10.0.3.0/24 area 0.0.0.0
+!
+route-map black-hole permit 10
+ set community 6969:666
+!
+route-map black-hole deny 20
+!
+ip forwarding
+ipv6 forwarding
+!
+line vty
+!
+end
